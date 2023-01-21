@@ -17,6 +17,7 @@ body {
 
 #game-window {
     border: 5px solid darkslategray;
+    padding: 0;
 }
 
 #stats-window {
