@@ -32,6 +32,10 @@ body {
     transform: translateX(-50%);
 }
 
+#lives-left, #info-icon, #credits {
+    cursor: pointer;
+}
+
 #info-icon {
     width: 64px;
 }
