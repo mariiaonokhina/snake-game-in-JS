@@ -131,7 +131,7 @@ let heartBreakingSound = new Audio('sounds/breaking-glass.wav');
 function didCollide() {
     const snakeHead = snake[0];
     
-    if(snakeHead.x === windowWidth || snakeHead.x === -15 || snakeHead.y === windowHeight || snakeHead.y === -15) {
+    if(snakeHead.x === windowWidth - 15 || snakeHead.x === -15 || snakeHead.y === windowHeight || snakeHead.y === -15) {
         heartBreakingSound.play();
         heartsLeft--;
         heartsDiv.innerHTML = remainingHeartsHTML.repeat(heartsLeft);
@@ -177,14 +177,21 @@ function playGame() {
         moveSnake();
         drawSnake();
 
+        if(heartsLeft == 0) {
+            gameOver();
+            return;
+        }
+
         // Play game again
         playGame();
     }, 100);
     
 }
 
+let gameOverSound = new Audio('sounds/game-over.wav');
+
 function gameOver() {
-    return;
+    gameOverSound.play();
 }
 
 
