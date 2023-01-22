@@ -1,8 +1,6 @@
 // GAME MECHANICS
 // Get coordinates of the game window
 var offsets = document.getElementById('game-window').getBoundingClientRect();
-var windowTop = offsets.top;   // y coordinate of TOP of the game window
-var windowLeft = offsets.left;    // x coordinate of LEFT side of the game window
 var windowRight = offsets.right;  // x coordinate of RIGHT side of the game window
 var windowBottom = offsets.bottom;    // y coordinate of BOTTOM of the game window
 var windowHeight = offsets.height;
@@ -50,26 +48,117 @@ let dx = 15;
 // Vertical velocity of the snake
 let dy = 0;
 
+function changeDirection(event) {
+    // Key codes for the arrows
+    const LEFT_KEY = 37;
+    const UP_KEY = 38;
+    const RIGHT_KEY = 39;
+    const DOWN_KEY = 40;
+
+    // Key codes for WASD
+    const KEY_W = 87;
+    const KEY_A = 65;
+    const KEY_S= 83;
+    const KEY_D = 68;
+
+    // Determines the type of key that was pressed
+    const keyPressed = event.keyCode;
+
+    const goingUp = dy === -15;
+    const goingDown = dy === 15;
+    const goingLeft = dx === -15;
+    const goingRight = dx === 15;
+
+    // Change direction of the snake
+    if((keyPressed === LEFT_KEY || keyPressed === KEY_A) && !goingRight) {
+        dx = -15;
+        dy = 0;
+    }
+
+    if((keyPressed === UP_KEY || keyPressed === KEY_W) && !goingDown) {
+        dx = 0;
+        dy = -15;
+    }
+
+    if((keyPressed === RIGHT_KEY || keyPressed === KEY_D) && !goingLeft) {
+        dx = 15;
+        dy = 0;
+    }
+
+    if((keyPressed === DOWN_KEY || keyPressed === KEY_S) && !goingUp) {
+        dx = 0;
+        dy = 15;
+    }
+}
+
+// Generate a random set of coordinates for the food to appear.
+function randomCoord(min, max) {
+    return Math.round((Math.random() * (max - min) + min) / 15) * 15;
+}
+
+let foodX;
+let foodY;
+let score = 0;
+
+function createFood() {
+    foodX = randomCoord(0, windowWidth - 15);
+    foodY = randomCoord(0, windowHeight - 15);
+
+    snake.forEach(function foodTouchesSnake(snakePart) {
+        const foodTouchesSnake = (snakePart.x === foodX) && (snakePart.y === foodY);
+        // If generated coordinates are the same as any part of a snake, generate them again
+        if(foodTouchesSnake) {
+            createFood();
+        }
+    });
+}
+
+const appleImage = new Image();
+appleImage.src = 'images/apple.png';
+
+function drawApple() {
+    gameCanvas.drawImage(appleImage, foodX, foodY);
+}
+
+
 // Updating the snake's position
 function moveSnake() {
     const head = {x: snake[0].x + dx, y: snake[0].y + dy};
 
-    snake.unshift(head);    // Make place for the new head by shifting it to the beginning of array
+    
+    // Check if snake ate apple
+    const didEatFood = snake[0].x == appleImage && snake[0].y == foodY;
 
-    snake.pop();    // Remove the last element of the array so it seems like the snake is moving
+    // Make place for the new head by shifting it to the beginning of array
+    snake.unshift(head);
+
+    // If the snake ate apple, create a new one
+    if(didEatFood) {
+        score += 10;
+        document.getElementById('score').innerHTML = score;
+        createFood();
+    }
+    else {
+        // Remove the last element of the array so it seems like the snake is moving
+        snake.pop();
+    }
 }
 
 
 // START PLAYING THE GAME
-function playGame() {
+playGame();
+createFood();
 
+function playGame() {
     setTimeout(function update() {
         clearCanvas();
+        drawApple();
         moveSnake();
         drawSnake();
 
+        // Play game again
         playGame();
-    }, 500);
+    }, 100);
     
 }
 
@@ -78,7 +167,8 @@ function gameOver() {
 }
 
 
-playGame();
+// Listen for keys pressed and change position of the snake accordingly
+document.addEventListener('keydown', changeDirection);
 
 
 // MISCELLANEOUS
