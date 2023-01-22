@@ -12,10 +12,25 @@ var windowWidth = offsets.width;
 var canvas = document.getElementById('game-window');
 var gameCanvas = canvas.getContext('2d');
 
+function clearCanvas() {
+    // Fill game canvas with white color to avoid stacking green bg color and making it opaque
+    gameCanvas.fillStyle = "white";
+    gameCanvas.fillRect(0, 0, windowRight, windowBottom);
+
+    // Fill game canvas with nearly transparent grass green color
+    gameCanvas.fillStyle = "rgba(0, 154, 23, 0.15)";
+    gameCanvas.fillRect(0, 0, windowRight, windowBottom);
+}
+
 // Create a snake using an array of 15px X 15px rectangles
 let xMidOfScreen = windowWidth / 2;
 let yMidOfScreen = (windowHeight-15) / 2;
-let snake = [{x: xMidOfScreen + 30, y: yMidOfScreen}, {x: xMidOfScreen + 15, y: yMidOfScreen}, {x: xMidOfScreen, y: yMidOfScreen}, {x: xMidOfScreen - 15, y: yMidOfScreen}, {x: xMidOfScreen - 30, y: yMidOfScreen}];
+let snake = [{x: xMidOfScreen + 30, y: yMidOfScreen}, 
+    {x: xMidOfScreen + 15, y: yMidOfScreen}, 
+    {x: xMidOfScreen, y: yMidOfScreen}, 
+    {x: xMidOfScreen - 15, y: yMidOfScreen}, 
+    {x: xMidOfScreen - 30, y: yMidOfScreen}];
+
 
 // Draw a single snake part (square)
 function drawSnakePart(snakePart) {
@@ -30,28 +45,32 @@ function drawSnake() {
     snake.forEach(drawSnakePart);
 }
 
+// Horizontal velocity of the snake - equals the width of 1 snake part
+let dx = 15;
+// Vertical velocity of the snake
+let dy = 0;
+
 // Updating the snake's position
 function moveSnake() {
-    // Horizontal velocity of the snake - equals the width of 1 snake part
-    let dx = 15;
-    // Vertical velocity of the snake - equals the height of 1 snake part
-    let dy = 15;
-
     const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+
     snake.unshift(head);    // Make place for the new head by shifting it to the beginning of array
+
     snake.pop();    // Remove the last element of the array so it seems like the snake is moving
 }
 
 
 // START PLAYING THE GAME
 function playGame() {
-    // Fill game canvas with nearly transparent grass green color
-    gameCanvas.fillStyle = "rgba(0, 154, 23, 0.15)";
-    gameCanvas.fillRect(0, 0, windowRight, windowBottom);
 
-    drawSnake();
+    setTimeout(function update() {
+        clearCanvas();
+        moveSnake();
+        drawSnake();
+
+        playGame();
+    }, 500);
     
-
 }
 
 function gameOver() {
