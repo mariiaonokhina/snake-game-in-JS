@@ -126,10 +126,19 @@ let heartsLeft;
 let remainingHeartsHTML = '<img class="heart" src="images/heart.png" />';
 const heartsDiv = document.getElementById('hearts-div');
 let heartBreakingSound = new Audio('sounds/breaking-glass.wav');
+let hurtSound = new Audio('sounds/hurt.wav');
 
 // Determines whether snake collided with itself or the walls
 function didCollide() {
     const snakeHead = snake[0];
+
+    for(let i = 4; i < snake.length; i++) {
+        if(snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
+            hurtSound.play();
+            heartsLeft--;
+            heartsDiv.innerHTML = remainingHeartsHTML.repeat(heartsLeft);
+        }
+    }
     
     if(snakeHead.x === windowWidth - 15 || snakeHead.x === -15 || snakeHead.y === windowHeight || snakeHead.y === -15) {
         heartBreakingSound.play();
