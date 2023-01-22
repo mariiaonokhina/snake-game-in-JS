@@ -11,47 +11,44 @@
     </head>
     <body>
         <div class="container-fluid" id="page-container">
+            <div class="row" id="game-container">
             <h3 class="text-center" id="game-title">Snake Game</h3>
 
-            <div class="row" id="game-container">
-                <!-- The game window -->
-                <canvas class="col-10" id="game-window" width="850" height="525">
-                    
-                </canvas>
-
-                <!-- Score and stats window -->
-                <div class="col-2 row align-items-center" id="stats-window">
-                    <!-- Score -->
-                    <div class="col-12 text-center" id="stats">
-                        <h4>Score: </h4>
-                        <h2 id="score">0</h2>
+            <!-- The game window -->
+            <canvas id="game-window" width="870" height="525">
+        
+            </canvas>
+            <!-- Score and stats window -->
+            <div class="row align-items-center" id="stats-window">
+                <!-- Score -->
+                <div class="col-12 text-center" id="stats">
+                    <h4>Score: </h4>
+                    <h2 id="score">0</h2>
+                </div>
+                <!-- Remaining lives -->
+                <div class="col-12 container-fluid text-center" id="lives-left">
+                    <h4>Lives left: </h4>
+                    <div class="row" id="hearts-div">
+                        <img class="heart" src="images/heart.png" />
+                        <img class="heart" src="images/heart.png" />
+                        <img class="heart" src="images/heart.png" />
                     </div>
-
-                    <!-- Remaining lives -->
-                    <div class="col-12 container-fluid text-center" id="lives-left">
-                        <h4>Lives left: </h4>
-
-                        <div class="row">
-                            <img class="col-4 heart" src="images/heart.png" />
-                            <img class="col-4 heart" src="images/heart.png" />
-                            <img class="col-4 heart" src="images/heart.png" />
-                        </div>
-                    </div>
-
-                    <!-- Rules of the game and credits -->
-                    <div class="col-12 container-fluid" id="rules-and-credits">
-                        <div class="row">
-                            <h4 class="col-12 text-center" id="credits">Credits</h4>
-                            <img class="col-12 align-self-center" src="images/info.png" id="info-icon" />
-                        </div>
+                </div>
+                <!-- Rules of the game and credits -->
+                <div class="col-12 container-fluid" id="rules-and-credits">
+                    <div class="row">
+                        <h4 class="col-12 text-center" id="credits">Credits</h4>
+                        <img class="col-12 align-self-center" src="images/info.png" id="info-icon" />
                     </div>
                 </div>
             </div>
+        </div>
         </div>
 
         <!-- CREDITS!!! -->
         <!-- "Chewing, Breadstick, Single, G.wav" by InspectorJ (www.jshaw.co.uk) of Freesound.org -->
         <!-- "Heartbeat, Regular, Single, 01-01, LOOP.wav" by InspectorJ (www.jshaw.co.uk) of Freesound.org -->
+        <!-- "Glass Smash, Bottle, H.wav" by InspectorJ (www.jshaw.co.uk) of Freesound.org -->
         <!-- "https://www.flaticon.com/free-icons/fruit" Fruit icons created by Vectors Market - Flaticon -->
         <!-- "https://www.flaticon.com/free-icons/heart" Heart icons created by Vlad Szirka - Flaticon -->
         <!-- "https://www.flaticon.com/free-icons/info" Info icons created by Freepik - Flaticon -->

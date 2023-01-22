@@ -22,7 +22,7 @@ function clearCanvas() {
 
 // Create a snake using an array of 15px X 15px rectangles
 let xMidOfScreen = windowWidth / 2;
-let yMidOfScreen = (windowHeight-15) / 2;
+let yMidOfScreen = (windowHeight - 15) / 2;
 let snake = [{x: xMidOfScreen + 30, y: yMidOfScreen}, 
     {x: xMidOfScreen + 15, y: yMidOfScreen}, 
     {x: xMidOfScreen, y: yMidOfScreen}, 
@@ -115,25 +115,45 @@ function createFood() {
 
 const appleImage = new Image();
 appleImage.src = 'images/apple.png';
+appleImage.width = 15;
+appleImage.height = 15;
 
 function drawApple() {
-    gameCanvas.drawImage(appleImage, foodX, foodY);
+    gameCanvas.drawImage(appleImage, foodX, foodY, 15, 15);
 }
 
+let heartsLeft;
+let remainingHeartsHTML = '<img class="heart" src="images/heart.png" />';
+const heartsDiv = document.getElementById('hearts-div');
+let heartBreakingSound = new Audio('sounds/breaking-glass.wav');
+
+// Determines whether snake collided with itself or the walls
+function didCollide() {
+    const snakeHead = snake[0];
+    
+    if(snakeHead.x === windowWidth || snakeHead.x === -15 || snakeHead.y === windowHeight || snakeHead.y === -15) {
+        heartBreakingSound.play();
+        heartsLeft--;
+        heartsDiv.innerHTML = remainingHeartsHTML.repeat(heartsLeft);
+    }
+
+}
+
+let chewingSound = new Audio('sounds/chewing.wav');
 
 // Updating the snake's position
 function moveSnake() {
     const head = {x: snake[0].x + dx, y: snake[0].y + dy};
 
-    
     // Check if snake ate apple
-    const didEatFood = snake[0].x == appleImage && snake[0].y == foodY;
+    const didEatFood = head.x === foodX && head.y === foodY;
 
     // Make place for the new head by shifting it to the beginning of array
     snake.unshift(head);
 
     // If the snake ate apple, create a new one
     if(didEatFood) {
+        chewingSound.play();
         score += 10;
         document.getElementById('score').innerHTML = score;
         createFood();
@@ -144,15 +164,16 @@ function moveSnake() {
     }
 }
 
-
 // START PLAYING THE GAME
 playGame();
+heartsLeft = 3;
 createFood();
 
 function playGame() {
     setTimeout(function update() {
         clearCanvas();
         drawApple();
+        didCollide();
         moveSnake();
         drawSnake();
 
@@ -173,11 +194,11 @@ document.addEventListener('keydown', changeDirection);
 
 // MISCELLANEOUS
 // Clicking on the hearts will produce the heartbeat sound
-let heartsLeft = document.getElementsByClassName('heart');
+let hearts = document.getElementsByClassName('heart');
 let heartbeatSound = new Audio('sounds/heartbeat.wav');
 
-for(var i = 0; i < heartsLeft.length; i++) {
-    heartsLeft[i].addEventListener('click', function() {
+for(var i = 0; i < hearts.length; i++) {
+    hearts[i].addEventListener('click', function() {
         heartbeatSound.play();
     });
 };

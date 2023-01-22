@@ -1,23 +1,33 @@
 body {
     background-color: aliceblue;
+    min-width: 1000px;
 }
 
-#page-container {
-    position: absolute;
-    height: 90%;
-    width: 90%;
+#page-container { 
+    position: absolute; 
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+#game-container {
+    margin: 0;;
+    height: fit-content;
+    width: 1000px;
+    position: relative;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
-#game-container {
-    height: inherit;
-}
-
 #game-window {
     border: 5px solid darkslategray;
     padding: 0;
+    margin: 0;
+    position: relative;
+    height: 525px;
+    width: 870px;
 }
 
 #stats-window {
@@ -25,6 +35,8 @@ body {
     border-right: 5px solid darkslategray;
     border-bottom: 5px solid darkslategray;
     margin: 0;
+    height: 525px;
+    width: 130px;
 }
 
 #stats, #lives-left, #rules-and-credits, #info-icon{
@@ -35,6 +47,10 @@ body {
 
 #lives-left, #info-icon, #credits {
     cursor: pointer;
+}
+
+.heart {
+    height: 50%;
 }
 
 #info-icon {
