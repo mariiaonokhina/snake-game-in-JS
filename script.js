@@ -122,30 +122,45 @@ function drawApple() {
     gameCanvas.drawImage(appleImage, foodX, foodY, 15, 15);
 }
 
-let heartsLeft;
-let remainingHeartsHTML = '<img class="heart" src="images/heart.png" />';
+let hasFullHeart;
+let hasEmptyHeart;
+let emptyHeartsHTML = '<img class="heart" src="images/heart-empty.png" />';
 const heartsDiv = document.getElementById('hearts-div');
 let heartBreakingSound = new Audio('sounds/breaking-glass.wav');
 let hurtSound = new Audio('sounds/hurt.wav');
+
+// Helper function that helps decide whether player has a life left
+function manageHearts() {
+    // If the player has an empty heart (meaning s/he used up a heart), end the game
+    if(hasFullHeart == false && hasEmptyHeart == true) {
+        hasEmptyHeart = false;
+        return;
+    }
+
+    hasFullHeart = false;
+    hasEmptyHeart = true;
+    // Change full heart image to empty heart image 
+    heartsDiv.innerHTML = emptyHeartsHTML;
+    wasRevived = true;
+}
 
 // Determines whether snake collided with itself or the walls
 function didCollide() {
     const snakeHead = snake[0];
 
+    // Check if the snake touched any of its parts
     for(let i = 4; i < snake.length; i++) {
         if(snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
             hurtSound.play();
-            heartsLeft--;
-            heartsDiv.innerHTML = remainingHeartsHTML.repeat(heartsLeft);
+            manageHearts();
         }
     }
     
+    // Check if the snake collided with walls
     if(snakeHead.x === windowWidth - 15 || snakeHead.x === -15 || snakeHead.y === windowHeight || snakeHead.y === -15) {
         heartBreakingSound.play();
-        heartsLeft--;
-        heartsDiv.innerHTML = remainingHeartsHTML.repeat(heartsLeft);
+        manageHearts();
     }
-
 }
 
 let chewingSound = new Audio('sounds/chewing.wav');
@@ -173,9 +188,53 @@ function moveSnake() {
     }
 }
 
+let wasRevived;
+
+// Revives the snake once and shortens its length
+function revive() {
+    clearCanvas();
+    
+    // Generate coordinates for the new head of the snake (not too close to the walls)
+    newHeadX = randomCoord(150, windowWidth - 150);
+    newHeadY = randomCoord(150, windowHeight - 150);
+
+    oldSnakeLength = snake.length;  // Save the original length of the snake
+    // Delete all previous snake parts (except head) to generate new ones
+    snake.length = 1;   
+
+    // Set the head's coordinates to new randomly generated coordinates
+    snake[0] = {x: newHeadX, y: newHeadY};
+    
+    // The length of the previous snake part
+    previousX = newHeadX;
+
+    // Punish the player by taking off some of the snake's length
+    if(oldSnakeLength >= 16) {
+        penalty = Math.floor(oldSnakeLength / 2);
+    }
+
+    else if(oldSnakeLength < 16 && oldSnakeLength > 5) {
+        penalty = 5;
+    }
+
+    else if(oldSnakeLength <= 5) {
+        penalty = 2;
+    }
+
+    // Generate a new snake with new coordinates
+    for(let i = 1; i <= penalty; i++) {
+        currentX = previousX - 15;
+
+        snake.push({x:currentX, y: newHeadY});
+        previousX = currentX;
+    }
+}
+
 // START PLAYING THE GAME
 playGame();
-heartsLeft = 3;
+hasFullHeart = true;
+hasEmptyHeart = true;
+wasRevived = false
 createFood();
 
 function playGame() {
@@ -186,7 +245,14 @@ function playGame() {
         moveSnake();
         drawSnake();
 
-        if(heartsLeft == 0) {
+        // Revive and continue the game
+        if(wasRevived == true) {
+            revive();
+            wasRevived = false;
+        }
+
+        // If the player was revived once and died again, it's game over
+        if(hasEmptyHeart == false) {
             gameOver();
             return;
         }
