@@ -3,8 +3,9 @@
 This version of the popular game was made as a project showcasing my Javascript skills. My goal is to make an interesting small game with several levels.
 
 ## Implemented features:
+- Added a start game screen.
 - Play this game with WASD or arrows.
-- Snake has 1 revival before game over.
+- Snake has 1 revival before game over. If the game is over, you can restart the game.
 - Snake gets hurt by biting itself or bumping into a wall.
 - Sounds played when the snake gets hurt differ depending on what caused it.
 - Snake respawns in a random place close to the middle of the screen.
@@ -14,7 +15,6 @@ This version of the popular game was made as a project showcasing my Javascript 
 
 ## Planned features:
 - Add levels with obstacles.
-- Add a "Start Game" button.
 - Add rules to the game.
 
 ## Credits:
