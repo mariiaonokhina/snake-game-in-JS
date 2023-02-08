@@ -6,23 +6,52 @@ var windowBottom = offsets.bottom;    // y coordinate of BOTTOM of the game wind
 var windowHeight = offsets.height;
 var windowWidth = offsets.width;
 
+let xMidOfScreen = windowWidth / 2;
+let yMidOfScreen = (windowHeight - 15) / 2;
+
 // Create canvas of the game window
 var canvas = document.getElementById('game-window');
 var gameCanvas = canvas.getContext('2d');
 
+gameCanvas.fillStyle = "lightgray"
+gameCanvas.strokestyle = "black"
+gameCanvas.fillRect(xMidOfScreen-100, yMidOfScreen-40, 200, 60);
+
+gameCanvas.font = "30px Arial";
+gameCanvas.fillStyle = "black";
+gameCanvas.textAlign = "center";
+gameCanvas.fillText("Start Game!", xMidOfScreen, yMidOfScreen)
+
+// Get the mouse position
+function getMousePos(event) {
+    return {
+        x: event.x - offsets.left,
+        y: event.y - offsets.top
+    };
+}
+
+// Check if a point is inside a rectangle
+function isInside(position) {
+    return position.x > xMidOfScreen-100 && 
+    position.x < xMidOfScreen+100 &&
+    position.y < yMidOfScreen+40 &&
+    position.y > yMidOfScreen-20
+}
+
+
+// Fill game canvas with white color to avoid stacking green bg color and making it opaque
 function clearCanvas() {
-    // Fill game canvas with white color to avoid stacking green bg color and making it opaque
     gameCanvas.fillStyle = "white";
     gameCanvas.fillRect(0, 0, windowRight, windowBottom);
-
-    // Fill game canvas with nearly transparent grass green color
+}
+// Fill game canvas with nearly transparent grass green color
+function fillCanvas() {
     gameCanvas.fillStyle = "rgba(0, 154, 23, 0.15)";
     gameCanvas.fillRect(0, 0, windowRight, windowBottom);
 }
 
+
 // Create a snake using an array of 15px X 15px rectangles
-let xMidOfScreen = windowWidth / 2;
-let yMidOfScreen = (windowHeight - 15) / 2;
 let snake = [{x: xMidOfScreen + 30, y: yMidOfScreen}, 
     {x: xMidOfScreen + 15, y: yMidOfScreen}, 
     {x: xMidOfScreen, y: yMidOfScreen}, 
@@ -230,16 +259,34 @@ function revive() {
     }
 }
 
-// START PLAYING THE GAME
-playGame();
+
+function startGameScreen() {
+    clearCanvas();
+}
+
+
+var didStartGame;
+
+// Listen for a click to start the game
+canvas.addEventListener('click', function(evt) {
+    var mousePosition = getMousePos(evt);
+
+    if(isInside(mousePosition) && !didStartGame) {
+        didStartGame = true;
+        playGame();
+    }
+}, false);
+
+
 hasFullHeart = true;
 hasEmptyHeart = true;
-wasRevived = false
+wasRevived = false;
 createFood();
 
 function playGame() {
     setTimeout(function update() {
         clearCanvas();
+        fillCanvas();
         drawApple();
         didCollide();
         moveSnake();
