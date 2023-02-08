@@ -13,14 +13,18 @@ let yMidOfScreen = (windowHeight - 15) / 2;
 var canvas = document.getElementById('game-window');
 var gameCanvas = canvas.getContext('2d');
 
-gameCanvas.fillStyle = "lightgray"
-gameCanvas.strokestyle = "black"
-gameCanvas.fillRect(xMidOfScreen-100, yMidOfScreen-40, 200, 60);
 
-gameCanvas.font = "30px Arial";
-gameCanvas.fillStyle = "black";
-gameCanvas.textAlign = "center";
-gameCanvas.fillText("Start Game!", xMidOfScreen, yMidOfScreen)
+function startGameScreen() {
+    clearCanvas();
+    gameCanvas.fillStyle = "lightgray"
+    gameCanvas.strokestyle = "black"
+    gameCanvas.fillRect(xMidOfScreen-100, yMidOfScreen-40, 200, 60);
+
+    gameCanvas.font = "30px Arial";
+    gameCanvas.fillStyle = "black";
+    gameCanvas.textAlign = "center";
+    gameCanvas.fillText("Start Game!", xMidOfScreen, yMidOfScreen)
+}
 
 // Get the mouse position
 function getMousePos(event) {
@@ -153,7 +157,10 @@ function drawApple() {
 
 let hasFullHeart;
 let hasEmptyHeart;
+
+let fullHeartsHTML = '<img class="heart" src="images/heart-full.png" />';
 let emptyHeartsHTML = '<img class="heart" src="images/heart-empty.png" />';
+
 const heartsDiv = document.getElementById('hearts-div');
 let heartBreakingSound = new Audio('sounds/breaking-glass.wav');
 let hurtSound = new Audio('sounds/hurt.wav');
@@ -260,29 +267,40 @@ function revive() {
 }
 
 
-function startGameScreen() {
-    clearCanvas();
-}
-
-
 var didStartGame;
+var didGameEnd;
+
+startGameScreen();
 
 // Listen for a click to start the game
 canvas.addEventListener('click', function(evt) {
     var mousePosition = getMousePos(evt);
 
+    // If the game was restarted or never started at all, start the game on click
     if(isInside(mousePosition) && !didStartGame) {
+        didGameEnd = false;
         didStartGame = true;
+        hasFullHeart = true;
+        hasEmptyHeart = true;
+        wasRevived = false;
+
+        createFood();
         playGame();
     }
+
+    // If game ended, but the user clicks restart, restart to the "Start Game" screen
+    else if(isInside(mousePosition) && didGameEnd) {
+        didStartGame = false;
+
+        heartsDiv.innerHTML = fullHeartsHTML;
+
+        startGameScreen();
+    }
+
 }, false);
 
 
-hasFullHeart = true;
-hasEmptyHeart = true;
-wasRevived = false;
-createFood();
-
+// Main function that handles all events in the game
 function playGame() {
     setTimeout(function update() {
         clearCanvas();
@@ -312,7 +330,26 @@ function playGame() {
 
 let gameOverSound = new Audio('sounds/game-over.wav');
 
+// Game over screen
 function gameOver() {
+    clearCanvas();
+
+    gameCanvas.fillStyle = "lightgray"
+    gameCanvas.strokestyle = "black"
+    gameCanvas.fillRect(xMidOfScreen-100, yMidOfScreen-40, 200, 60);
+
+    gameCanvas.font = "30px Arial";
+    gameCanvas.fillStyle = "black";
+    gameCanvas.textAlign = "center";
+    gameCanvas.fillText("Game Over :(", xMidOfScreen, yMidOfScreen-60)
+
+    gameCanvas.font = "30px Arial";
+    gameCanvas.fillStyle = "black";
+    gameCanvas.textAlign = "center";
+    gameCanvas.fillText("Restart", xMidOfScreen, yMidOfScreen)
+
+    didGameEnd = true;
+
     gameOverSound.play();
 }
 
